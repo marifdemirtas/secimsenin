@@ -121,10 +121,22 @@ drawCharts = (data, key) => {
     drawChartOnKeys(data["2018-Meclis"], '#chart2');
     drawChartOnKeys(data["2019-Belediye"], '#chart3');
 }
+function showSpinner() {
+  const spinner = document.createElement('div');
+  spinner.className = 'spinner';
+  spinner.innerHTML = '<div></div>';
+  document.body.appendChild(spinner);
+  return spinner;
+}
+
+function hideSpinner(spinner) {
+  document.body.removeChild(spinner);
+}
 
 // On change, load data and draw charts
 ilSelect.addEventListener('change', () => {
   const il = ilSelect.value;
+  let spinner = showSpinner();
   fetch(`files/${il}.json`)
     .then(res => res.json())
     .then(data => {
@@ -133,7 +145,8 @@ ilSelect.addEventListener('change', () => {
         populateSelect('ilce', Object.keys(data["2018_CB"]["ilceler"]));
         populateSelect('mahalle', []);
     })
-    .catch(error => console.error('Error fetching data:', error));
+    .catch(error => console.error('Error fetching data:', error))
+    .finally(() => {hideSpinner(spinner)});
 });
 
 ilceSelect.addEventListener('change', () => {
